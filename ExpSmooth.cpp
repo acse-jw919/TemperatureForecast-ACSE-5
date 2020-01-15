@@ -15,46 +15,45 @@ public:
     static double doubleES(vector<double> data);
     static double tripleES(vector<double> data);
 private:
-    static double optimize(vector<double> data, int nparam, double (*stepFunc)(vector<double>, int, double*));
-    static double basicStep(vector<double> data, int end, double *param);
-    static double doubleStep(vector<double> data, int end, double *param);
-    static double tripleStep(vector<double> data, int end, double *param);
+    static double optimize(vector<double> data, int nparam, double (*stepFunc)(vector<double>, double&, double*));
+    static double basicStep(vector<double> data, double &rmse, double *param);
+    static double doubleStep(vector<double> data, double &rmse, double *param);
+    static double tripleStep(vector<double> data, double &rmse, double *param);
 };
 
 double ExponentialSmoothing::basicES(vector<double> data){
     double* param = new double[1];
     param[0] = optimize(data, 1, basicStep);
-    double predicted = basicStep(data, data.size(), param);
+    double rmse;
+    double predicted = basicStep(data, rmse, param);
     return predicted;
 }
 
 double ExponentialSmoothing::doubleES(vector<double> data){
     double* param = new double[1];
     param[0] = optimize(data, 1, doubleStep);
-    double predicted = doubleStep(data, data.size(), param);
+    double rmse;
+    double predicted = doubleStep(data, rmse, param);
     return predicted;
 }
 
 double ExponentialSmoothing::tripleES(vector<double> data){
     double* param = new double[1];
     param[0] = optimize(data, 1, tripleStep);
-    double predicted = tripleStep(data, data.size(), param);
+    double rmse;
+    double predicted = tripleStep(data, rmse, param);
     return predicted;
 }
 
-double ExponentialSmoothing::optimize(vector<double> data, int nparam, double (*stepFunc)(vector<double>, int, double*)){
+double ExponentialSmoothing::optimize(vector<double> data, int nparam, double (*stepFunc)(vector<double>, double&, double*)){
     double* param = new double[nparam];
-    int start = min(50, (int) data.size() - 1);
     double best_alpha = 1.0 / MAXPRE;
     double best_rmse = 10000;
     for(int i = 1; i < MAXPRE; i++){
         param[0] = double(i) / MAXPRE;
         double rmse = 0.0;
-        for(int j = start; j < data.size() - 1; j++){
-            double predicted = stepFunc(data, j, param);
-            rmse += pow(predicted - data.at(j), 2);
-        }
-        rmse = sqrt(rmse / (data.size() - start));
+        double predicted = stepFunc(data, rmse, param);
+        rmse = sqrt(rmse / data.size());
         if(rmse < best_rmse){
             best_alpha = param[0];
             best_rmse = rmse;
@@ -64,32 +63,38 @@ double ExponentialSmoothing::optimize(vector<double> data, int nparam, double (*
     return best_alpha;
 }
 
-double ExponentialSmoothing::basicStep(vector<double> data, int end, double *param){
+double ExponentialSmoothing::basicStep(vector<double> data, double &rmse, double *param){
     double s = data.at(0);
-    for(int i = 1; i < end; i++){
+    for(int i = 1; i < data.size(); i++){
         s = param[0] * data.at(i) + (1 - param[0]) * s;
+        rmse += pow(s - data.at(i), 2);
     }
     return s;
 }
 
-double ExponentialSmoothing::doubleStep(vector<double> data, int end, double *param){
+double ExponentialSmoothing::doubleStep(vector<double> data, double &rmse, double *param){
     double s1 = data.at(0);
     double s2 = data.at(0);
-    for(int i = 1; i < end; i++){
+    for(int i = 1; i < data.size(); i++){
         s1 = param[0] * data.at(i) + (1 - param[0]) * s1;
         s2 = param[0] * s1 + (1 - param[0]) * s2;
+        rmse += pow((2*s1 - s2) + param[0] / (1 - param[0]) * (s1 - s2) - data.at(i), 2);
     }
     return (2*s1 - s2) + param[0] / (1 - param[0]) * (s1 - s2); 
 }
 
-double ExponentialSmoothing::tripleStep(vector<double> data, int end, double *param){
+double ExponentialSmoothing::tripleStep(vector<double> data, double &rmse, double *param){
     double s1 = data.at(0);
     double s2 = data.at(0);
     double s3 = data.at(0);
-    for(int i = 1; i < end; i++){
+    for(int i = 1; i < data.size(); i++){
         s1 = param[0] * data.at(i) + (1 - param[0]) * s1;
         s2 = param[0] * s1 + (1 - param[0]) * s2;
         s3 = param[0] * s2 + (1 - param[0]) * s3;
+        double A = (3*s1 - 3*s2 + s3);
+        double B = 0.5 * param[0] / pow(1-param[0], 2) * ((6-5*param[0])*s1 - 2*(5-4*param[0])*s2 + (4-3*param[0])*s3);
+        double C = 0.5 * pow(param[0], 2) / pow(1-param[0], 2) * (s1 - 2*s2 + s3);
+        rmse += pow(A + B + C - data.at(i), 2);
     }
     double A = (3*s1 - 3*s2 + s3);
     double B = 0.5 * param[0] / pow(1-param[0], 2) * ((6-5*param[0])*s1 - 2*(5-4*param[0])*s2 + (4-3*param[0])*s3);
