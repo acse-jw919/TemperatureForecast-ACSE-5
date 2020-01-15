@@ -1,7 +1,7 @@
 # TemperatureForecast-ACSE-5
 Homework 1 for ACSE-5
 
-## Baseline - Exponential Smoothing
+## Method 1 - Exponential Smoothing - BAD
 
 ### Basic Exponential Smoothing
 

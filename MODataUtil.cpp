@@ -6,6 +6,7 @@
 #include <map>
 #include <sstream>
 #include "DataUtil.cpp"
+#include "gnuplot_i.hpp"
 
 using namespace std;
 
@@ -163,8 +164,6 @@ MOStation MODataUtil::loadStationFromFile(string fileName){
     // }
 
     // MOStation Armagh = MODataUtil::loadStationFromFile("Data/MetOffice/armaghdata.txt");
-    // Armagh.printData(10);
 
-    // cout << string2Double("1.111") << endl;
-//     return 0;
+    // return 0;
 // }
