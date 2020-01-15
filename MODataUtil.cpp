@@ -146,7 +146,7 @@ MOStation MODataUtil::loadStationFromFile(string fileName){
     return tmpStation;
 }
 
-int main(int argc, char **argv){
+// int main(int argc, char **argv){
     
     /* Download from URL lists */
     // MODataUtil::downloadDataFile("Data/MetOfficeData.txt");
@@ -162,9 +162,9 @@ int main(int argc, char **argv){
     //     cout << pairValue.first << endl;
     // }
 
-    MOStation Armagh = MODataUtil::loadStationFromFile("Data/MetOffice/armaghdata.txt");
-    Armagh.printData(10);
+    // MOStation Armagh = MODataUtil::loadStationFromFile("Data/MetOffice/armaghdata.txt");
+    // Armagh.printData(10);
 
     // cout << string2Double("1.111") << endl;
-    return 0;
-}
+//     return 0;
+// }
