@@ -98,8 +98,12 @@ double ExponentialSmoothing::tripleStep(vector<double> data, int end, double *pa
 }
 
 int main(){
-    MOStation Armagh = MODataUtil::loadStationFromFile("Data/MetOffice/armaghdata.txt");
-    double predicted = ExponentialSmoothing::tripleES(Armagh.getTempHigh());
-    cout << "Temperature High: " << predicted << endl;
+    MOStation Armagh = MODataUtil::loadStationFromFile("Data/MetOffice/bradforddata.txt");
+    double predicted1 = ExponentialSmoothing::basicES(Armagh.getTempHigh());
+    double predicted2 = ExponentialSmoothing::doubleES(Armagh.getTempHigh());
+    double predicted3 = ExponentialSmoothing::tripleES(Armagh.getTempHigh());
+    cout << "Basic Temperature High: " << predicted1 << endl;
+    cout << "Double Temperature High: " << predicted2 << endl;
+    cout << "Triple Temperature High: " << predicted3 << endl;
     return 0;
 }
