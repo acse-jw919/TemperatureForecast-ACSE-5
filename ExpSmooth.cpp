@@ -66,8 +66,8 @@ double ExponentialSmoothing::optimize(vector<double> data, int nparam, double (*
 double ExponentialSmoothing::basicStep(vector<double> data, double &rmse, double *param){
     double s = data.at(0);
     for(int i = 1; i < data.size(); i++){
-        s = param[0] * data.at(i) + (1 - param[0]) * s;
         rmse += pow(s - data.at(i), 2);
+        s = param[0] * data.at(i) + (1 - param[0]) * s;
     }
     return s;
 }
@@ -76,9 +76,9 @@ double ExponentialSmoothing::doubleStep(vector<double> data, double &rmse, doubl
     double s1 = data.at(0);
     double s2 = data.at(0);
     for(int i = 1; i < data.size(); i++){
+        rmse += pow((2*s1 - s2) + param[0] / (1 - param[0]) * (s1 - s2) - data.at(i), 2);
         s1 = param[0] * data.at(i) + (1 - param[0]) * s1;
         s2 = param[0] * s1 + (1 - param[0]) * s2;
-        rmse += pow((2*s1 - s2) + param[0] / (1 - param[0]) * (s1 - s2) - data.at(i), 2);
     }
     return (2*s1 - s2) + param[0] / (1 - param[0]) * (s1 - s2); 
 }
@@ -88,13 +88,13 @@ double ExponentialSmoothing::tripleStep(vector<double> data, double &rmse, doubl
     double s2 = data.at(0);
     double s3 = data.at(0);
     for(int i = 1; i < data.size(); i++){
-        s1 = param[0] * data.at(i) + (1 - param[0]) * s1;
-        s2 = param[0] * s1 + (1 - param[0]) * s2;
-        s3 = param[0] * s2 + (1 - param[0]) * s3;
         double A = (3*s1 - 3*s2 + s3);
         double B = 0.5 * param[0] / pow(1-param[0], 2) * ((6-5*param[0])*s1 - 2*(5-4*param[0])*s2 + (4-3*param[0])*s3);
         double C = 0.5 * pow(param[0], 2) / pow(1-param[0], 2) * (s1 - 2*s2 + s3);
         rmse += pow(A + B + C - data.at(i), 2);
+        s1 = param[0] * data.at(i) + (1 - param[0]) * s1;
+        s2 = param[0] * s1 + (1 - param[0]) * s2;
+        s3 = param[0] * s2 + (1 - param[0]) * s3;
     }
     double A = (3*s1 - 3*s2 + s3);
     double B = 0.5 * param[0] / pow(1-param[0], 2) * ((6-5*param[0])*s1 - 2*(5-4*param[0])*s2 + (4-3*param[0])*s3);
