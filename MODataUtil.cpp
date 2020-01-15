@@ -66,9 +66,9 @@ void MOStation::appendARecord(int year, int month, double tH, double tL, int af,
 }
 
 void MOStation::printData(int line){
-    printf("tmax\ttmin\tAF\tRain\tSun\n");
+    printf("tmax\ttmin\ttavg\tAF\tRain\tSun\n");
     for(int i = 0; i < line && i < getRecordSize(); i++){
-        printf("%.2f\t%.2f\t%d\t%.2f\t%.2f\n", tempHigh.at(i), tempLow.at(i),
+        printf("%.2f\t%.2f\t%.2f\t%d\t%.2f\t%.2f\n", tempHigh.at(i), tempLow.at(i),
                 tempAvg.at(i), daysOfAF.at(i), rainfall.at(i), sunshine.at(i));
     }
 }
