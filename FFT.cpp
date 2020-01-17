@@ -27,7 +27,8 @@ vector<complex<double> > fft(vector<complex<double> > x, int N){
         for(int i = 0; i < N / 2; i++){
             complex<double> evenv = even.at(i);
             complex<double> oddv = odd.at(i);
-            complex<double> t = polar(1.0, -2 * M_PI * i / N) * oddv;
+            complex<double> tmp(0.0, -2 * M_PI * i / N);
+            complex<double> t = exp(tmp) * oddv;
             X.at(i) = evenv + t;
             X.at(i + N / 2) = evenv - t;
         }
@@ -62,7 +63,7 @@ vector<double> fftCombine(vector<complex<double> > x, double loops){
             tmp *= 2;
         }
         for(int j = 0; j < length; j++){
-            double ind = loops / length * M_PI * 2 * j;
+            double ind = (double) j * loops / length * M_PI * 2;
             result.at(j) += real(tmp) * cos(i * ind) - imag(tmp) * sin(i * ind);
         }
     }
@@ -70,15 +71,17 @@ vector<double> fftCombine(vector<complex<double> > x, double loops){
 } 
 
 int main(){
+    // complex<double> x(0, -M_PI);
+    // cout << exp(x) << endl;
     MOStation Armagh = MODataUtil::loadStationFromFile("Data/MetOffice/armaghdata.txt");
     vector<double> tempAvg = Armagh.getTempAvg();
-    int offset = tempAvg.size() - 100;
+    int offset = tempAvg.size() - pow(2, 8) - 1;
     vector<double> tempAvgpro;
     vector<double> tempAvg2;
     vector<complex<double> > tempAvgComplex;
     for(int i = offset; i < tempAvg.size(); i++){
-        // complex<double> tmp(tempAvg.at(i) - tempAvg.at(i - 1), 0);
-        complex<double> tmp(tempAvg.at(i));
+        // complex<double> tmp(log(tempAvg.at(i)) - log(tempAvg.at(i - 1)), 0);
+        complex<double> tmp(log(tempAvg.at(i)));
         if(isnan(real(tmp))){
             continue;
         }
@@ -86,31 +89,35 @@ int main(){
         tempAvgpro.push_back(real(tmp));
         tempAvg2.push_back(tempAvg.at(i));
     }
+    cout << tempAvgpro.size() << endl;
     vector<complex<double> > X = fft(tempAvgComplex, tempAvgComplex.size());
-    // vector<complex<double> > Xi = ifft(X);
-    // vector<double> xii(Xi.size());
-    // for(int i = 0; i < xii.size(); i++){
-    //     xii.at(i) = real(Xi.at(i));
-    // }
-    vector<double> result = fftCombine(X, 1.1);
-
-    vector<double> predicted(result.size() + 1);
-    predicted.at(0) = tempAvg.at(offset - 1);
-    for(int i = 1; i < predicted.size(); i++){
-        predicted[i] = predicted[i - 1] + (result[i - 1]);
+    vector<complex<double> > Xi = ifft(X);
+    vector<double> xii(Xi.size());
+    for(int i = 0; i < xii.size(); i++){
+        xii.at(i) = real(Xi.at(i));
     }
+    vector<double> result = fftCombine(X, 1.3);
 
+    vector<double> predicted(result.size());
+    double rmse = 0.0;
+    for(int i = 0; i < predicted.size(); i++){
+        predicted[i] = exp(result[i - 1]);
+        if(i < tempAvg2.size()){
+            rmse += pow(predicted[i] - tempAvg2[i], 2);
+        }
+    }
+    rmse = sqrt(rmse / tempAvg2.size());
     Gnuplot ArmaghPlot("Armagh");
-    ArmaghPlot.set_style("lines").plot_x(result, "pre diff");
-    ArmaghPlot.set_style("lines").plot_x(tempAvgpro, "raw diff");
-    // ArmaghPlot.set_style("lines").plot_x(xii, "");
+    ArmaghPlot.set_style("lines").plot_x(tempAvgpro, "log");
+    ArmaghPlot.set_style("lines").plot_x(xii, "iff");
 
     Gnuplot g2;
     g2.set_style("lines").plot_x(tempAvg2, "raw");
     g2.set_style("lines").plot_x(predicted, "pre");
 
+    cout << "RMSE: " << rmse << endl;
+
     ArmaghPlot.showonscreen();
-    cout << result.size() << " " << tempAvgpro.size() << endl;
     cout << endl << "Press ENTER to continue..." << endl;
     std::cin.clear();
     std::cin.ignore(std::cin.rdbuf()->in_avail());
