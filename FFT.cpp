@@ -130,10 +130,10 @@ void FFT::combineFFT(vector<Complex> x, double loops){
 } 
 
 int main(){
-    MOStation Armagh = MODataUtil::loadStationFromFile("Data/MetOffice/armaghdata.txt");
-    vector<double> tempAvg = Armagh.getTempAvg();
-    FFT predArmagh(tempAvg);
-    predArmagh.predict(60);
-    predArmagh.plotResult();
+    MOStation s1 = MODataUtil::loadStationFromFile("Data/MetOffice/heathrowdata.txt");
+    vector<double> s11 = s1.getTempAvg();
+    FFT s111(s11);
+    s111.predict(60);
+    s111.plotResult();
     return 0;
 }

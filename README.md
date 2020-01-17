@@ -1,7 +1,21 @@
 # TemperatureForecast-ACSE-5
 Homework 1 for ACSE-5
 
-## Method 1 - Exponential Smoothing - BAD
+## Method 1 - Fast Fourier Transformation - Excellent
+
+* Shawbury Station - RMSE: 0.118409
+
+
+![](Shawbury5Years.png)
+
+
+* Heathrow Station - RMSE: 0.0544736
+
+
+![](Heathrow5Years.png)
+
+
+## Method 2 - Exponential Smoothing - BAD
 
 ### Basic Exponential Smoothing
 
