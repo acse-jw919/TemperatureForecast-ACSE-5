@@ -602,7 +602,7 @@ std::string Gnuplot::terminal_std = "windows";
 #elif ( defined(unix) || defined(__unix) || defined(__unix__) ) && !defined(__APPLE__)
 std::string Gnuplot::terminal_std = "x11";
 #elif defined(__APPLE__)
-std::string Gnuplot::terminal_std = "aqua";
+std::string Gnuplot::terminal_std = "x11";
 #endif
 
 //------------------------------------------------------------------------------
