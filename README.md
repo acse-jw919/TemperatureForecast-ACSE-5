@@ -1,5 +1,4 @@
-# TemperatureForecast-ACSE-5
-Homework 1 for ACSE-5
+# Temperature Forecast - ACSE-5
 
 ## Things to do
 
@@ -26,7 +25,7 @@ The program takes two arguments as input, the station name and the periods you w
 
 For example, if you want to predict the average temperatures of next 12 months of Heathrow Station, the command should be
 ```
-./Main.out Heathrow 12
+./Main.out heathrow 12
 ```
 
 ## Result
