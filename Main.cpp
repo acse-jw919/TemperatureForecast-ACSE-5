@@ -8,9 +8,11 @@
 using namespace std;
 
 int main(int argc, char** argv){
-    MOStation station = MOStation::loadStationFromFile("Data/MetOffice/bradforddata.txt");
+    string stationName(argv[1]);
+    int periods = atoi(argv[2]);
+    MOStation station = MOStation::loadStationFromFile("Data/MetOffice/shawburydata.txt");
     FFT fft(station.getTempAvg());
-    fft.predict(60);
+    fft.predict(periods);
     fft.plotResult();
     return 0;
 }

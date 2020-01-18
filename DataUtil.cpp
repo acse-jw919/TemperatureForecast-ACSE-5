@@ -9,7 +9,7 @@ using namespace std;
 class DataUtil{
 public:
     static int downloadFile(string url, string outfileName);
-    void downloadDataFile(string fileName);
+    static void downloadDataFile(string fileName);
 private:
     static size_t writeCallback(void*, size_t, size_t, FILE*);
 };
@@ -49,4 +49,8 @@ void DataUtil::downloadDataFile(string fileName){
         DataUtil::downloadFile(url, dataFolder + station);
     }
     urlFile.close();
+}
+
+int main(){
+    DataUtil::downloadDataFile("Data/MetOfficeData.txt");
 }
