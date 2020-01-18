@@ -30,16 +30,30 @@ private:
 
 FFT::FFT(vector<double> data){
     size = data.size();
-    for(int i = size - pow(2, 8) - 1; i < size; i++){
+    vector<double> tmpdata;
+    for(int i = 0; i < size; i++){
         Complex tmp(log(data[i]), 0.0);
         if(isnan(real(tmp))){
             continue;
         }
-        rawData.push_back(data[i]);
-        processedData.push_back(log(data[i]));
+        tmpdata.push_back(data[i]);
+    }
+    size = tmpdata.size();
+    int bit = 0;
+    for(bit = 0; bit < 10; bit++){
+        if((1 << bit) > size){
+            break;
+        }
+    }
+    bit--;
+    for(int i = tmpdata.size() - (1 << bit); i < tmpdata.size(); i++){
+        Complex tmp(log(tmpdata[i]), 0.0);
+        rawData.push_back(tmpdata[i]);
+        processedData.push_back(log(tmpdata[i]));
         rawComplex.push_back(tmp);
     }
-    size = pow(2, 8);
+    size = pow(2, bit);
+    cout << "Sample Size: " << size << endl;
 }
 
 void FFT::predict(int periodAfter){

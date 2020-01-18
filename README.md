@@ -1,10 +1,5 @@
 # Temperature Forecast - ACSE-5
 
-## Things to do
-
-1. CArray
-4. FFT Optimise
-
 ## Usage
 
 #### Download

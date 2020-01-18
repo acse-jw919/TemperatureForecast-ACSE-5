@@ -92,7 +92,15 @@ MOStation MOStation::loadStationFromFile(string fileName){
     int full = lineNum + 1;
     while(getline(dataFile, line)){
         lineNum++;
-        if(line.find("---") != -1){
+        char *dataLine = new char[line.length() + 1];
+        strcpy(dataLine, line.c_str());
+        char *splited = strtok(dataLine, " ");
+        splited = strtok(NULL, " ");
+        splited = strtok(NULL, " ");
+        string tH = splited;
+        splited = strtok(NULL, " ");
+        string tL = splited;
+        if(tH.find("---") != -1 || tL.find("---") != -1){
             full = lineNum + 1;
         }
     }
