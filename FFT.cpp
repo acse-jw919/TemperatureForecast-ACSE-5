@@ -4,7 +4,6 @@
 #include <complex.h>
 #include <vector>
 #include <math.h>
-#include "MODataUtil.cpp"
 #include "gnuplot_i.hpp"
 
 using namespace std;
@@ -128,12 +127,3 @@ void FFT::combineFFT(vector<Complex> x, double loops){
         }
     }
 } 
-
-int main(){
-    MOStation s1 = MODataUtil::loadStationFromFile("Data/MetOffice/heathrowdata.txt");
-    vector<double> s11 = s1.getTempAvg();
-    FFT s111(s11);
-    s111.predict(60);
-    s111.plotResult();
-    return 0;
-}

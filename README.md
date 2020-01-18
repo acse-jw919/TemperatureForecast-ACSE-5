@@ -6,13 +6,13 @@ Homework 1 for ACSE-5
 * Shawbury Station - RMSE: 0.118409
 
 
-![](Shawbury5Years.png)
+![](Figures/Shawbury5Years.png)
 
 
 * Heathrow Station - RMSE: 0.0544736
 
 
-![](Heathrow5Years.png)
+![](Figures/Heathrow5Years.png)
 
 
 ## Method 2 - Exponential Smoothing - BAD

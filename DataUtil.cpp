@@ -8,7 +8,8 @@ using namespace std;
 
 class DataUtil{
 public:
-    static int downloadFile(string, string);
+    static int downloadFile(string url, string outfileName);
+    void downloadDataFile(string fileName);
 private:
     static size_t writeCallback(void*, size_t, size_t, FILE*);
 };
@@ -32,4 +33,20 @@ int DataUtil::downloadFile(string url, string outfileName){
     fclose(fp);
     curl_global_cleanup();
     return 0;
+}
+
+void DataUtil::downloadDataFile(string fileName){
+    ifstream urlFile(fileName);
+    string url;
+    string dataFolder("Data/MetOffice/");
+    while(getline(urlFile, url)){
+        int lastIt = url.find_last_of('/') + 1;
+        string station = url.substr(lastIt, url.length() - lastIt - 1);
+        if(station.find(' ', 0) != -1){
+            continue;
+        }
+        cout << station << endl;
+        DataUtil::downloadFile(url, dataFolder + station);
+    }
+    urlFile.close();
 }

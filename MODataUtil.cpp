@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 #include <sstream>
-#include "DataUtil.cpp"
 #include "gnuplot_i.hpp"
 
 using namespace std;
@@ -29,6 +28,7 @@ private:
     vector<double> rainfall;
     vector<double> sunshine;
 public:
+    static MOStation loadStationFromFile(string fileName);
     MOStation(string stationName);
     int getRecordSize();
     void appendARecord(int year, int month, double tH, double tL, int af, double rf, double ss);
@@ -74,29 +74,7 @@ void MOStation::printData(int line){
     }
 }
 
-class MODataUtil{
-public:
-    static void downloadDataFile(string fileName);
-    static MOStation loadStationFromFile(string fileName);
-};
-
-void MODataUtil::downloadDataFile(string fileName){
-    ifstream urlFile(fileName);
-    string url;
-    string dataFolder("Data/MetOffice/");
-    while(getline(urlFile, url)){
-        int lastIt = url.find_last_of('/') + 1;
-        string station = url.substr(lastIt, url.length() - lastIt - 1);
-        if(station.find(' ', 0) != -1){
-            continue;
-        }
-        cout << station << endl;
-        DataUtil::downloadFile(url, dataFolder + station);
-    }
-    urlFile.close();
-}
-
-MOStation MODataUtil::loadStationFromFile(string fileName){
+MOStation MOStation::loadStationFromFile(string fileName){
     ifstream dataFile(fileName);
     string line;
     int lineNum = 0;
@@ -146,24 +124,3 @@ MOStation MODataUtil::loadStationFromFile(string fileName){
     dataFile2.close();
     return tmpStation;
 }
-
-// int main(int argc, char **argv){
-    
-    /* Download from URL lists */
-    // MODataUtil::downloadDataFile("Data/MetOfficeData.txt");
-
-    /* Test appending records */
-    // MOStation testStation("Test Station");
-    // testStation.appendARecord(2019, 11, 4.5, -0.5, 10, 24, 7.3);
-    // testStation.appendARecord(2019, 12, 3.1, -2.5, 18, 66, 7.1);
-    // testStation.appendARecord(2020, 1, 2.8, -4.3521, 11, 78, 7.2);
-    // map<string, int> monthMap = testStation.getMonthMap();
-    // for(map<string, int>::const_iterator iter = monthMap.begin(); iter != monthMap.end(); iter++){
-    //     pair<string, int> pairValue = *iter;
-    //     cout << pairValue.first << endl;
-    // }
-
-    // MOStation Armagh = MODataUtil::loadStationFromFile("Data/MetOffice/armaghdata.txt");
-
-    // return 0;
-// }

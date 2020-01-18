@@ -4,7 +4,6 @@
 #include <cmath>
 #include <vector>
 #include <numeric>
-#include "MODataUtil.cpp"
 
 #define MAXPRE 100
 
@@ -138,45 +137,4 @@ double* ExponentialSmoothing::tripleStep(vector<double> data, int length, double
         predicted[i] = s + (i + 1) * b + c1.at((data.size() - L + i) % L);
     }
     return predicted;
-}
-
-void wait_for_key (){
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__)  // every keypress registered, also arrow keys
-    cout << endl << "Press any key to continue..." << endl;
-
-    FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-    _getch();
-#elif defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
-    cout << endl << "Press ENTER to continue..." << endl;
-
-    std::cin.clear();
-    std::cin.ignore(std::cin.rdbuf()->in_avail());
-    std::cin.get();
-#endif
-    return;
-}
-
-int main(){
-    MOStation Armagh = MODataUtil::loadStationFromFile("Data/MetOffice/armaghdata.txt");
-
-    Gnuplot ArmaghPlot("Armagh");
-    vector<double> tempHigh = Armagh.getTempHigh();
-    ArmaghPlot.reset_plot();
-    vector<double> tmp(tempHigh.begin() + ((int) (tempHigh.size() / 12)) * 12 - 5*12, tempHigh.end());
-    // double predicted1 = ExponentialSmoothing::basicES(Armagh.getTempHigh());
-    // cout << "Basic Temperature High: " << predicted1 << endl;
-    // tmp.push_back(predicted1);
-    int length = 12;
-    // double* predicted2 = ExponentialSmoothing::doubleES(Armagh.getTempHigh(), length);
-    // for(int i = 0; i < length; i++){
-    //     tmp.push_back(*(predicted2 + i));
-    // }
-    double* predicted3 = ExponentialSmoothing::tripleES(Armagh.getTempHigh(), length);
-    for(int i = 0; i < length; i++){
-        tmp.push_back(*(predicted3 + i));
-    }
-    ArmaghPlot.set_style("lines").plot_x(tmp, "user-defined doubles");
-    ArmaghPlot.showonscreen();
-    wait_for_key(); 
-    return 0;
 }
